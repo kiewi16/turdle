@@ -1,6 +1,5 @@
 import './styles.css';
 import './assets/turdle-turtle.png';
-// import { words } from './words.js';
 import { fetchWords } from './apiCalls.js'; 
 
 // Global Variables
@@ -27,8 +26,7 @@ var gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
 
 // Event Listeners
 window.addEventListener('load', () => {
-    fetchData()
-  setGame()
+  fetchData()
 })
 
 for (var i = 0; i < inputs.length; i++) {
@@ -56,18 +54,18 @@ function fetchData() {
     console.log("words.length:", words.length)
     const randomWord = getRandomWord(words)
     console.log("randomWord:", randomWord)
-    setGame()
+    setGame(randomWord)
   })
 }; 
 
-function setGame() {
+function setGame(randomWord) {
   currentRow = 1;
-  winningWord = getRandomWord();
+  winningWord = randomWord
  // winningWord is obtained through the getRandomWord() function
   updateInputPermissions();
 }
 
-function getRandomWord() {
+function getRandomWord(words) {
   var randomIndex = Math.floor(Math.random() * words.length);
   return words[randomIndex];
 }
