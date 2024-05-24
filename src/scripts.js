@@ -1,12 +1,14 @@
 import './styles.css';
 import './assets/turdle-turtle.png';
-import { fetchWords } from './apiCalls.js'; 
+// import { words } from './words.js';
+// import { fetchWords } from './apiCalls.js'; 
 
 // Global Variables
 var winningWord = '';
 var currentRow = 1;
 var guess = '';
 var gamesPlayed = [];
+let words = []
 
 // Query Selectors
 var inputs = document.querySelectorAll('input');
@@ -26,7 +28,7 @@ var gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
 
 // Event Listeners
 window.addEventListener('load', () => {
-  fetchData()
+  fetchWords()
 })
 
 for (var i = 0; i < inputs.length; i++) {
@@ -47,21 +49,19 @@ viewStatsButton.addEventListener('click', viewStats);
 
 // Functions
 
-function fetchData() {
-  Promise.all([fetchWords()]).then(e => {
-    const words = e[0]
-    console.log("words:", words)
-    console.log("words.length:", words.length)
-    const randomWord = getRandomWord(words)
-    console.log("randomWord:", randomWord)
-    setGame(randomWord)
-  })
-}; 
+function fetchWords() {
+  return fetch("http://localhost:3001/api/v1/words")
+  .then(response => response.json())
+  .then(e => {
+    const wordsArray = e
+    words = wordsArray
+    setGame(words)    
+    })
+  }
 
-function setGame(randomWord) {
+function setGame(words) {
   currentRow = 1;
-  winningWord = randomWord
- // winningWord is obtained through the getRandomWord() function
+  winningWord = getRandomWord(words)
   updateInputPermissions();
 }
 
