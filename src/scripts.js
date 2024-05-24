@@ -1,6 +1,7 @@
 import './styles.css';
 import './assets/turdle-turtle.png';
-import { words } from './words.js';
+// import { words } from './words.js';
+import { fetchWords } from './apiCalls.js'; 
 
 // Global Variables
 var winningWord = '';
@@ -12,7 +13,7 @@ var gamesPlayed = [];
 var inputs = document.querySelectorAll('input');
 var guessButton = document.querySelector('#guess-button');
 var keyLetters = document.querySelectorAll('span');
-var errorMessage = document.querySelector('#error-message');
+var errorMessage = document.querySelector('#error-message'); 
 var viewRulesButton = document.querySelector('#rules-button');
 var viewGameButton = document.querySelector('#play-button');
 var viewStatsButton = document.querySelector('#stats-button');
@@ -25,7 +26,10 @@ var gameOverGuessCount = document.querySelector('#game-over-guesses-count');
 var gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
 
 // Event Listeners
-window.addEventListener('load', setGame);
+window.addEventListener('load', () => {
+    fetchData()
+  setGame()
+})
 
 for (var i = 0; i < inputs.length; i++) {
   inputs[i].addEventListener('keyup', function () { moveToNextInput(event) });
@@ -44,20 +48,34 @@ viewGameButton.addEventListener('click', viewGame);
 viewStatsButton.addEventListener('click', viewStats);
 
 // Functions
+
+function fetchData() {
+  Promise.all([fetchWords()]).then(e => {
+    const words = e[0]
+    console.log("words:", words)
+    console.log("words.length:", words.length)
+    const randomWord = getRandomWord(words)
+    console.log("randomWord:", randomWord)
+    setGame()
+  })
+}; 
+
 function setGame() {
   currentRow = 1;
   winningWord = getRandomWord();
+ // winningWord is obtained through the getRandomWord() function
   updateInputPermissions();
 }
 
 function getRandomWord() {
-  var randomIndex = Math.floor(Math.random() * 2500);
+  var randomIndex = Math.floor(Math.random() * words.length);
   return words[randomIndex];
 }
 
 function updateInputPermissions() {
   for (var i = 0; i < inputs.length; i++) {
     if (!inputs[i].id.includes(`-${currentRow}-`)) {
+      // inputs[i].id for example, id="cell-1-0"; allows user to access row being played
       inputs[i].disabled = true;
     } else {
       inputs[i].disabled = false;
@@ -69,7 +87,6 @@ function updateInputPermissions() {
 
 function moveToNextInput(e) {
   var key = e.keyCode || e.charCode;
-
   if (key !== 8 && key !== 46) {
     var indexOfNext = parseInt(e.target.id.split('-')[2]) + 1;
     inputs[indexOfNext].focus();
@@ -82,8 +99,8 @@ function clickLetter(e) {
 
   for (var i = 0; i < inputs.length; i++) {
     if (inputs[i].id.includes(`-${currentRow}-`) && !inputs[i].value && !activeInput) {
-      activeInput = inputs[i];
-      activeIndex = i;
+      activeInput = inputs[i]; // input maxlength="1" onkeypress="return /[a-z]/i.test(event.key)" type="text" name="" value="" id="cell-1-0"
+      activeIndex = i; // index position of square being played. Starts at 0. For example, activeIndex: 0
     }
   }
 
