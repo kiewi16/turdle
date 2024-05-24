@@ -1,6 +1,5 @@
 import './styles.css';
 import './assets/turdle-turtle.png';
-// import { words } from './words.js';
 // import { fetchWords } from './apiCalls.js'; 
 
 // Global Variables
